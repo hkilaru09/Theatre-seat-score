@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- artifact:head-start -->
+<title>SeatScore</title>
+<meta name="description" content="Scores every seat in a theater for picture, sound and sightlines, and finds the best seats together for your group.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+<!-- artifact:head-end -->
+</head>
+<body>
+<!-- artifact:body-start -->
+<div class="wrap">
+  <header class="masthead">
+    <div class="brand">
+      <h1>Seat<span>Score</span></h1>
+      <p>Every seat scored for picture, sound and sightlines, so you can pick the best one before you book.</p>
+    </div>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Theater"></nav>
+  </header>
+
+  <section class="stats" id="stats" aria-label="Summary"></section>
+
+  <div class="main">
+    <section class="panel" aria-labelledby="map-title">
+      <div class="panel-head">
+        <h2 id="map-title">Seat map</h2>
+        <span class="eyebrow" id="map-kind"></span>
+      </div>
+      <p class="map-meta" id="map-meta"></p>
+      <div class="map-scroll" id="map"></div>
+      <div class="legend" id="legend"></div>
+      <div class="map-actions">
+        <button class="btn" id="edit-toggle" type="button" aria-pressed="false">Mark seats as booked</button>
+        <button class="btn" id="randomize" type="button">New sample bookings</button>
+        <button class="btn" id="clear" type="button">Clear bookings</button>
+        <span class="map-meta" id="booked-count"></span>
+      </div>
+    </section>
+
+    <aside class="rail">
+      <section class="panel" aria-labelledby="group-title">
+        <div class="panel-head">
+          <h2 id="group-title">Seats together</h2>
+          <span class="eyebrow">Open seats, side by side</span>
+        </div>
+        <div class="group-row">
+          <div class="stepper" role="group" aria-label="Group size">
+            <button type="button" id="group-minus" aria-label="Fewer people">&minus;</button>
+            <output id="group-size" aria-live="polite">2</output>
+            <button type="button" id="group-plus" aria-label="More people">+</button>
+          </div>
+          <span class="map-meta" id="group-label">people</span>
+        </div>
+        <ol class="results" id="results"></ol>
+      </section>
+
+      <section class="panel" id="detail" aria-live="polite" aria-labelledby="detail-title"></section>
+
+      <section class="panel" aria-labelledby="prefs-title">
+        <div class="panel-head">
+          <h2 id="prefs-title">What matters to you</h2>
+          <span class="eyebrow">Weights from 0 to 5</span>
+        </div>
+        <div class="chips" id="presets"></div>
+        <div class="sliders" id="sliders"></div>
+        <div class="fov-row">
+          <div class="line">
+            <label for="fov">Screen size in your view</label>
+            <span><output class="mono" id="fov-out"></output> <button type="button" class="btn link" id="fov-auto">Use screen default</button></span>
+          </div>
+          <input type="range" id="fov" min="26" max="70" step="1">
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="panel" aria-labelledby="method-title">
+    <h2 id="method-title">How the score works</h2>
+    <div class="method">
+      <div class="prose">
+        <p>Each seat gets six factor scores between 0 and 1, computed from the room's real geometry: screen size and height, distance to each row, row rise and seat position. The total is the weighted average of those factors on a 0 to 100 scale, using the weights you set.</p>
+        <p>The group finder looks along each row for runs of open seats with no aisle in between. It slides a window of your group's size along each run and ranks blocks by 75% average score and 25% worst seat, so nobody in the group ends up with a bad seat.</p>
+        <p>Bookings shown on load are a random sample, not live data. Good seats are more likely to be taken, as they are in real theaters.</p>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Factor</th><th>What is measured</th><th>Rule of thumb</th></tr></thead>
+          <tbody>
+            <tr><td>Immersion</td><td>Horizontal angle the screen fills</td><td class="mono">SMPTE ≥ 30°, THX ≈ 36–40°, IMAX ≈ 60°</td></tr>
+            <tr><td>Neck comfort</td><td>Upward angle to screen center and top edge</td><td class="mono">≤ 12° to center, ≤ 30° to top</td></tr>
+            <tr><td>Centering</td><td>Angle off the screen's centerline</td><td class="mono">Full score within 4°</td></tr>
+            <tr><td>Sound</td><td>Distance from the mix position</td><td class="mono">⅔ of room depth, centered</td></tr>
+            <tr><td>Clear view</td><td>C-value: clearance over the eyes in front</td><td class="mono">120 mm is ideal</td></tr>
+            <tr><td>Aisle access</td><td>Seat at an aisle or row end</td><td class="mono">Yes or no</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">SeatScore v1. Sample theaters are modeled on typical room dimensions, not specific venues.</footer>
+</div>
+<!-- artifact:body-end -->
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

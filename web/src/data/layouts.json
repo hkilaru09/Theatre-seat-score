@@ -1,0 +1,83 @@
+[
+  {
+    "id": "multiplex",
+    "name": "Multiplex Screen 4",
+    "kind": "Stadium seating, 2.39:1 scope screen",
+    "note": "A typical mall multiplex: three flat front rows, then 400 mm stadium risers.",
+    "screen": { "widthM": 10.0, "heightM": 4.18, "bottomM": 1.2 },
+    "recommendedFovDeg": 40,
+    "firstRowM": 4.0,
+    "rowSpacingM": 1.05,
+    "seatWidthM": 0.56,
+    "rake": { "frontRows": 3, "frontSlopeM": 0.06, "riserM": 0.4 },
+    "rows": [
+      { "label": "A", "seats": ".xxxxx|xxxxxxxxxxxx|xxxxx." },
+      { "label": "B", "seats": ".xxxxx|xxxxxxxxxxxx|xxxxx." },
+      { "label": "C", "seats": ".xxxxx|xxxxxxxxxxxx|xxxxx." },
+      { "label": "D", "seats": "xxxxxx|xxxxxxxxxxxx|xxxxxx" },
+      { "label": "E", "seats": "xxxxxx|xxxxxxxxxxxx|xxxxxx" },
+      { "label": "F", "seats": "xxxxxx|xxxxxxxxxxxx|xxxxxx" },
+      { "label": "G", "seats": "xxxxxx|xxxxxxxxxxxx|xxxxxx" },
+      { "label": "H", "seats": "xxxxxx|xxxxxxxxxxxx|xxxxxx" },
+      { "label": "J", "seats": "xxxxxx|xxxxxxxxxxxx|xxxxxx" },
+      { "label": "K", "seats": "xxxxxx|xxxxxxxxxxxx|xxxxxx" },
+      { "label": "L", "seats": "xxxxxx|xxxxxxxxxxxx|xxxxxx" },
+      { "label": "M", "seats": "xxxxxx|xxxxxxxxxxxx|xxxxxx" },
+      { "label": "N", "seats": "xxxxxx|xxxxxxxxxxxx|xxxxxx" },
+      { "label": "P", "seats": "xxxxxx|wwxxxxxxxxww|xxxxxx" }
+    ]
+  },
+  {
+    "id": "imax",
+    "name": "IMAX Laser Hall",
+    "kind": "Steep stadium, 1.43:1 floor-to-ceiling screen",
+    "note": "The screen is meant to fill your peripheral vision, so the target angle is wider and the rake is steep.",
+    "screen": { "widthM": 20.0, "heightM": 14.0, "bottomM": 0.9 },
+    "recommendedFovDeg": 60,
+    "firstRowM": 6.0,
+    "rowSpacingM": 1.0,
+    "seatWidthM": 0.56,
+    "rake": { "frontRows": 2, "frontSlopeM": 0.05, "riserM": 0.5 },
+    "rows": [
+      { "label": "A", "seats": "...xxxx|xxxxxxxxxxxxxxxx|xxxx..." },
+      { "label": "B", "seats": "...xxxx|xxxxxxxxxxxxxxxx|xxxx..." },
+      { "label": "C", "seats": "..xxxxx|xxxxxxxxxxxxxxxx|xxxxx.." },
+      { "label": "D", "seats": "..xxxxx|xxxxxxxxxxxxxxxx|xxxxx.." },
+      { "label": "E", "seats": "..xxxxx|xxxxxxxxxxxxxxxx|xxxxx.." },
+      { "label": "F", "seats": "..xxxxx|xxxxxxxxxxxxxxxx|xxxxx.." },
+      { "label": "G", "seats": "xxxxxxx|xxxxxxxxxxxxxxxx|xxxxxxx" },
+      { "label": "H", "seats": "xxxxxxx|xxxxxxxxxxxxxxxx|xxxxxxx" },
+      { "label": "J", "seats": "xxxxxxx|xxxxxxxxxxxxxxxx|xxxxxxx" },
+      { "label": "K", "seats": "xxxxxxx|xxxxxxxxxxxxxxxx|xxxxxxx" },
+      { "label": "L", "seats": "xxxxxxx|xxxxxxxxxxxxxxxx|xxxxxxx" },
+      { "label": "M", "seats": "xxxxxxx|xxxxxxxxxxxxxxxx|xxxxxxx" },
+      { "label": "N", "seats": "xxxxxxx|xxxxxxxxxxxxxxxx|xxxxxxx" },
+      { "label": "P", "seats": "xxxxxxx|xxxxxxxxxxxxxxxx|xxxxxxx" },
+      { "label": "Q", "seats": "xxxxxxx|xxxxxxxxxxxxxxxx|xxxxxxx" },
+      { "label": "R", "seats": "xxxxxxx|wwxxxxxxxxxxxxww|xxxxxxx" }
+    ]
+  },
+  {
+    "id": "arthouse",
+    "name": "Arthouse Screening Room",
+    "kind": "Nearly flat floor, 1.85:1 flat screen",
+    "note": "A converted room with a center aisle and only 80 mm of rise per row, so the head in front matters.",
+    "screen": { "widthM": 6.0, "heightM": 3.24, "bottomM": 1.0 },
+    "recommendedFovDeg": 38,
+    "firstRowM": 3.5,
+    "rowSpacingM": 1.0,
+    "seatWidthM": 0.58,
+    "rake": { "frontRows": 9, "frontSlopeM": 0.08, "riserM": 0 },
+    "rows": [
+      { "label": "A", "seats": ".xxxxx|xxxxx." },
+      { "label": "B", "seats": ".xxxxx|xxxxx." },
+      { "label": "C", "seats": "xxxxxx|xxxxxx" },
+      { "label": "D", "seats": "xxxxxx|xxxxxx" },
+      { "label": "E", "seats": "xxxxxx|xxxxxx" },
+      { "label": "F", "seats": "xxxxxx|xxxxxx" },
+      { "label": "G", "seats": "xxxxxx|xxxxxx" },
+      { "label": "H", "seats": "xxxxxx|xxxxxx" },
+      { "label": "J", "seats": "xxwxxx|xxxwxx" }
+    ]
+  }
+]

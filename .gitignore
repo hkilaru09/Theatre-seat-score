@@ -1,0 +1,11 @@
+dist/
+.DS_Store
+__pycache__/
+node_modules/
+v1/dist/
+web/dist/
+data/raw/
+data/processed/
+data/.venv/
+.ipynb_checkpoints/
+.pytest_cache/

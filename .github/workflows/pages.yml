@@ -1,0 +1,87 @@
+name: Test and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: v1 tests
+        run: node --test v1/tests/*.test.js
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: data/requirements.txt
+      - name: Data pipeline tests
+        working-directory: data
+        run: |
+          pip install pandas pytest shapely==2.1.2
+          pytest -q pipeline
+      - name: Install web dependencies
+        working-directory: web
+        run: npm ci
+      - name: Type-check
+        working-directory: web
+        run: npm run typecheck
+      - name: Lint
+        working-directory: web
+        run: npm run lint
+      - name: Unit tests
+        working-directory: web
+        run: npm test
+      - name: Build
+        working-directory: web
+        run: npm run build
+
+  # v2 is the site root; v1 stays available under /v1/.
+  deploy:
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Build v2
+        working-directory: web
+        run: |
+          npm ci
+          npm run build
+      - name: Collect site files
+        run: |
+          cp -r web/dist _site
+          mkdir -p _site/v1/data
+          cp v1/index.html v1/styles.css v1/engine.js v1/app.js _site/v1/
+          cp v1/data/layouts.json _site/v1/data/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
