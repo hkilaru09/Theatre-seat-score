@@ -1,5 +1,4 @@
 import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 import { useEffect, useRef } from "react";
 import type { Cinema } from "../lib/cinemas";
 
@@ -17,6 +16,7 @@ export function CinemaMap({ cinemas, selected, onSelect }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const layer = useRef<L.LayerGroup | null>(null);
+  const fit = useRef(() => {});
   const select = useRef(onSelect);
   useEffect(() => {
     select.current = onSelect;
@@ -27,8 +27,11 @@ export function CinemaMap({ cinemas, selected, onSelect }: Props) {
     L.tileLayer(TILES, { maxZoom: 19, attribution: ATTRIBUTION }).addTo(m);
     layer.current = L.layerGroup().addTo(m);
     map.current = m;
-    // Leaflet measures its box once; measure again whenever the layout resizes it.
-    const resize = new ResizeObserver(() => m.invalidateSize());
+    // Leaflet measures its box once; measure again and refit whenever the layout resizes it.
+    const resize = new ResizeObserver(() => {
+      m.invalidateSize();
+      fit.current();
+    });
     resize.observe(el.current!);
     return () => {
       resize.disconnect();
@@ -56,8 +59,11 @@ export function CinemaMap({ cinemas, selected, onSelect }: Props) {
         .on("click", () => select.current(c))
         .addTo(group);
     }
-    if (selected) m.setView([selected.lat, selected.lon], Math.max(m.getZoom(), 14));
-    else if (cinemas.length) m.fitBounds(L.latLngBounds(cinemas.map((c) => [c.lat, c.lon])), { padding: [24, 24], maxZoom: 13 });
+    fit.current = () => {
+      if (selected) m.setView([selected.lat, selected.lon], Math.max(m.getZoom(), 14));
+      else if (cinemas.length) m.fitBounds(L.latLngBounds(cinemas.map((c) => [c.lat, c.lon])), { padding: [24, 24], maxZoom: 13 });
+    };
+    fit.current();
   }, [cinemas, selected]);
 
   return <div ref={el} className="cinema-map" role="region" aria-label="Map of matching cinemas" />;

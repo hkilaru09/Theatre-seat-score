@@ -1,3 +1,5 @@
+// Leaflet's stylesheet ships with the page so the map never lays out before its CSS arrives.
+import "leaflet/dist/leaflet.css";
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import type { Layout } from "../engine";
 import { REAL_LAYOUTS, defaultCountry, fetchCountry, fetchIndex, osmUrl, searchCinemas, type Cinema, type CinemaIndex } from "../lib/cinemas";
