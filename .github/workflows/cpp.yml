@@ -1,0 +1,66 @@
+name: C++ engine
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            preset: release
+          - os: macos-latest
+            preset: release
+          - os: ubuntu-latest
+            preset: asan
+    name: ${{ matrix.os }} / ${{ matrix.preset }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install Ninja (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Install Ninja (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ninja || true
+      - name: Configure
+        working-directory: cpp
+        run: cmake --preset ${{ matrix.preset }}
+      - name: Build
+        working-directory: cpp
+        run: cmake --build --preset ${{ matrix.preset }}
+      - name: Test
+        working-directory: cpp
+        run: ctest --preset ${{ matrix.preset }}
+
+      # The golden files must match what the TypeScript engine produces today.
+      - uses: actions/setup-node@v5
+        if: matrix.os == 'ubuntu-latest' && matrix.preset == 'release'
+        with:
+          node-version: 24
+      - name: Golden files are up to date
+        if: matrix.os == 'ubuntu-latest' && matrix.preset == 'release'
+        run: |
+          node cpp/tools/gen_golden.ts
+          git diff --exit-code -- cpp/tests/golden
+
+      - uses: actions/setup-python@v6
+        if: matrix.os == 'ubuntu-latest' && matrix.preset == 'release'
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: data/requirements.txt
+      - name: Data pipeline tests on the C++ engine
+        if: matrix.os == 'ubuntu-latest' && matrix.preset == 'release'
+        working-directory: data
+        run: |
+          pip install pandas pytest shapely==2.1.2
+          pytest -q pipeline --engine cpp

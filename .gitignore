@@ -9,3 +9,4 @@ data/processed/
 data/.venv/
 .ipynb_checkpoints/
 .pytest_cache/
+cpp/build/

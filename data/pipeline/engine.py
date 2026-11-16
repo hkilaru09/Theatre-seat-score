@@ -1,12 +1,17 @@
-"""Call SeatScore's TypeScript engine from Python.
+"""Call SeatScore's engine from Python.
 
 The notebooks score seats with the exact code the web app uses
 (web/src/engine), run through web/scripts/score.ts on Node 22.18+ (which runs
 TypeScript directly). Nothing here re-implements the scoring.
+
+Set SEATSCORE_ENGINE=cpp (or run `pytest --engine cpp`) to use the C++ port in
+cpp/ instead. Its seatscore_cli reads and writes the same JSON and is checked
+against the TypeScript engine by cpp/tests/test_parity.cpp.
 """
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -15,17 +20,37 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "web" / "scripts" / "score.ts"
+CPP_CLI = ROOT / "cpp" / "build" / "release" / "seatscore_cli"
 
 FACTORS = ["immersion", "neck", "centering", "sound", "sightline", "aisle"]
 BALANCED = {"immersion": 3, "neck": 3, "centering": 2, "sound": 2, "sightline": 3, "aisle": 0}
 
 
-def score_jobs(jobs: list[dict]) -> list[dict]:
-    """Run a batch of {key, layout, prefs} jobs through the engine in one Node call."""
+def engine() -> str:
+    """"node" (the default) or "cpp", from SEATSCORE_ENGINE."""
+    name = os.environ.get("SEATSCORE_ENGINE", "node")
+    if name not in ("node", "cpp"):
+        raise ValueError(f"SEATSCORE_ENGINE must be node or cpp, not {name!r}")
+    return name
+
+
+def engine_command() -> list[str] | None:
+    """The command that runs the chosen engine, or None if it isn't available."""
+    if engine() == "cpp":
+        cli = Path(os.environ.get("SEATSCORE_CPP_CLI", CPP_CLI))
+        return [str(cli)] if cli.is_file() else None
     node = shutil.which("node")
-    if node is None:
+    return [node, str(SCRIPT)] if node else None
+
+
+def score_jobs(jobs: list[dict]) -> list[dict]:
+    """Run a batch of {key, layout, prefs} jobs through the engine in one call."""
+    cmd = engine_command()
+    if cmd is None:
+        if engine() == "cpp":
+            raise RuntimeError("Build the C++ engine first: cd cpp && cmake --preset release && cmake --build --preset release")
         raise RuntimeError("Node.js is needed to run the SeatScore engine (brew install node).")
-    out = subprocess.run([node, str(SCRIPT)], input=json.dumps({"jobs": jobs}), capture_output=True, text=True, check=True)
+    out = subprocess.run(cmd, input=json.dumps({"jobs": jobs}), capture_output=True, text=True, check=True)
     return json.loads(out.stdout)["results"]
 
 

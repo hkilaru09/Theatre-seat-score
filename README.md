@@ -51,8 +51,10 @@ web/                         v2: React + TypeScript + Vite (deployed at the site
   src/data/layouts.json      sample theaters
   src/components/CinemaFinder.tsx  worldwide cinema search, list and map (Leaflet)
   public/cinemas/            one JSON file per country, built by data/pipeline/osm.py
+cpp/                         C++20 port of the engine: library, CLI, GoogleTest parity suite, benchmarks; see cpp/README.md
 data/                        Python pipeline (pandas, shapely, pytest) and notebooks; see data/README.md
 .github/workflows/pages.yml  type-check, lint, test and build, then deploy v2 (and v1 under /v1/)
+.github/workflows/cpp.yml    C++ build and tests on Linux and macOS, sanitizers, golden-file and pipeline checks
 ```
 
 ### Version 2 (web/)
@@ -89,6 +91,17 @@ x = seat   w = wheelchair space   | = aisle   . = no seat
 }
 ```
 
+### C++ engine (cpp/)
+
+A C++20 port of the same engine. It gives identical scores, bookings and group results on every layout and preset (checked against golden files from the TypeScript engine), and runs `scoreSeats` 6–12× and `findGroups` 17–31× faster. `seatscore_cli` is a drop-in replacement for `web/scripts/score.ts`, so the data pipeline can use either engine (`pytest pipeline --engine cpp`).
+
+```bash
+cd cpp
+cmake --preset release && cmake --build --preset release && ctest --preset release
+```
+
+See [cpp/README.md](cpp/README.md) for the design, parity checks and benchmarks.
+
 ## Run locally
 
 The page loads `data/layouts.json` with `fetch`, so it needs a local server; opening the file directly won't work.
@@ -120,6 +133,7 @@ Every push to `main` runs the tests (v1, data pipeline, type-check, lint, Vitest
 - **Estimated layouts for every cinema:** generate a typical layout from a screen's seat count and format (standard, stadium, IMAX, recliner), always labeled as an estimate.
 - **Real layouts from users:** a layout editor and a FastAPI + Postgres backend for submitting and reviewing real seat plans, which replace the estimates.
 - **A choice model** that learns preference weights from the order in which seats were booked.
+- **Python bindings for the C++ engine** (pybind11), so the preference grid search can call it in-process, and a WebAssembly build to run it in the browser.
 
 ## Data
 

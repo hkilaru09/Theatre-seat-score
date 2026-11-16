@@ -1,11 +1,9 @@
-import shutil
-
 import pytest
 
-from pipeline.engine import frames, score_frame
+from pipeline.engine import engine, engine_command, frames, score_frame
 from pipeline.layouts import HALL1, HALL2
 
-pytestmark = pytest.mark.skipif(shutil.which("node") is None, reason="needs Node.js to run the TypeScript engine")
+pytestmark = pytest.mark.skipif(engine_command() is None, reason=f"the {engine()} engine is not available")
 
 
 def test_engine_scores_every_seat():
