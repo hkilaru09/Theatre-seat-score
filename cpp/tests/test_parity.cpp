@@ -21,7 +21,9 @@ void expectMetrics(const Metrics& m, const nlohmann::json& g, const std::string&
   EXPECT_NEAR(m.mixDist, g.at("mixDist").get<double>(), kTol) << where;
   EXPECT_NEAR(m.mixNorm, g.at("mixNorm").get<double>(), kTol) << where;
   ASSERT_EQ(m.cValue.has_value(), !g.at("cValue").is_null()) << where;
-  if (m.cValue) EXPECT_NEAR(*m.cValue, g.at("cValue").get<double>(), kTol) << where;
+  if (m.cValue) {
+    EXPECT_NEAR(*m.cValue, g.at("cValue").get<double>(), kTol) << where;
+  }
 }
 
 class Parity : public ::testing::TestWithParam<std::string> {};

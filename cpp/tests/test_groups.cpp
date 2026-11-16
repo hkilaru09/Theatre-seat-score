@@ -154,8 +154,9 @@ TEST(FindGroups, MatchesBruteForceOnEveryLayout) {
         const Taken taken = sampleBookings(m, scores, seed);
         const auto best = findGroups(m, scores, taken, size, 1);
         const double want = bruteForceBest(m, scores, taken, size);
-        if (std::isinf(want)) EXPECT_TRUE(best.empty()) << l.id;
-        else {
+        if (std::isinf(want)) {
+          EXPECT_TRUE(best.empty()) << l.id;
+        } else {
           ASSERT_EQ(best.size(), 1u) << l.id;
           EXPECT_NEAR(best[0].rank, want, 1e-9) << l.id << " size " << size << " seed " << seed;
         }
