@@ -41,16 +41,20 @@ jobs:
         working-directory: cpp
         run: ctest --preset ${{ matrix.preset }}
 
-      # The golden files must match what the TypeScript engine produces today.
+      # Regenerate the golden files from today's TypeScript engine and check the
+      # C++ engine against them, so a change to either side can't slip through.
+      # (Bytes can differ from the committed files in the last digit of a float
+      # across Node versions; the parity test compares floats within 1e-9.)
       - uses: actions/setup-node@v5
         if: matrix.os == 'ubuntu-latest' && matrix.preset == 'release'
         with:
           node-version: 24
-      - name: Golden files are up to date
+      - name: Parity against freshly generated golden files
         if: matrix.os == 'ubuntu-latest' && matrix.preset == 'release'
         run: |
           node cpp/tools/gen_golden.ts
-          git diff --exit-code -- cpp/tests/golden
+          git diff --stat -- cpp/tests/golden
+          cd cpp && ctest --preset release -R "Parity|Mulberry32"
 
       - uses: actions/setup-python@v6
         if: matrix.os == 'ubuntu-latest' && matrix.preset == 'release'

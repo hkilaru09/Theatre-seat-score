@@ -25,7 +25,7 @@ cmake --preset release && cmake --build --preset release && ctest --preset relea
 cmake --preset asan && cmake --build --preset asan && ctest --preset asan   # AddressSanitizer + UBSan
 ```
 
-The library builds with `-Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror`. CI (`.github/workflows/cpp.yml`) runs the release build on Ubuntu (GCC) and macOS (Apple Clang), the sanitizer build on Ubuntu, and the data pipeline's tests against the C++ CLI.
+The library builds with `-Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror`. CI (`.github/workflows/cpp.yml`) runs the release build on Ubuntu (GCC) and macOS (Apple Clang), the sanitizer build on Ubuntu, the parity tests against golden files freshly generated from the TypeScript engine, and the data pipeline's tests against the C++ CLI.
 
 ### Use it from the data pipeline
 
